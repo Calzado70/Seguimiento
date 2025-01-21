@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     // Adaptador para la lista de registros
     private ArrayAdapter<String> registrosAdapter;
 
+    private String nombreActual = "";
+
     // Contraseña para eliminar
     private static final String PASSWORD = "Admon123";
 
@@ -105,30 +107,41 @@ public class MainActivity extends AppCompatActivity {
         String nombre = nombreEditText.getText().toString().trim();
         String area = spinnerArea.getSelectedItem().toString();
 
-        // Validación: verificar que el código tenga al menos 13 dígitos
-        if (codigo.isEmpty() || nombre.isEmpty() || area.isEmpty()) {
+        if (codigo.isEmpty() || (nombre.isEmpty() && nombreActual.isEmpty()) || area.isEmpty()) {
             Toast.makeText(this, "Por favor complete todos los campos.", Toast.LENGTH_SHORT).show();
             return;
+        }
+        if (nombre.isEmpty()) {
+            nombre = nombreActual;
         } else if (codigo.length() < 13) {
             Toast.makeText(this, "El código debe tener al menos 13 dígitos.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         String fecha = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-        String talla = codigo.substring(codigo.length() - 2); // Los últimos 2 dígitos
-        String sku = codigo.substring(0, 3); // Los primeros 3 dígitos
+        String talla = codigo.length() >= 2 ? codigo.substring(codigo.length() - 2) : "N/A";
+        String sku = codigo.substring(0, 3);
 
-        // Agregar un nuevo registro al ViewModel
-        viewModel.registros.add(new Registro(nombre, area, codigo, fecha, talla, sku));
+        boolean codigoExistente = false;
+        for (Registro registro : viewModel.registros) {
+            if (registro.codigo.equals(codigo)) {
+                registro.cantidad++;
+                codigoExistente = true;
+                break;
+            }
+        }
 
-        // Actualizar la lista y limpiar los campos
+        if (!codigoExistente) {
+            viewModel.registros.add(new Registro(nombre, area, codigo, fecha, talla, sku));
+        }
+
+        nombreActual = nombre;
+
         actualizarListaRegistros();
         codigoEditText.setText("");
-        nombreEditText.setText("");
-        spinnerArea.setSelection(0);
+        nombreEditText.setText(nombreActual);
         Toast.makeText(this, "Lectura procesada.", Toast.LENGTH_SHORT).show();
     }
-
     private void actualizarListaRegistros() {
         registrosAdapter.clear();
         for (Registro registro : viewModel.registros) {
@@ -150,11 +163,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         try {
-            // Crear un libro de Excel
             XSSFWorkbook workbook = new XSSFWorkbook();
             Sheet sheet = workbook.createSheet("Registros");
 
-            // Crear encabezado
             Row headerRow = sheet.createRow(0);
             headerRow.createCell(0).setCellValue("Nombre");
             headerRow.createCell(1).setCellValue("Área");
@@ -162,8 +173,8 @@ public class MainActivity extends AppCompatActivity {
             headerRow.createCell(3).setCellValue("Fecha");
             headerRow.createCell(4).setCellValue("Talla");
             headerRow.createCell(5).setCellValue("SKU");
+            headerRow.createCell(6).setCellValue("Cantidad");
 
-            // Agregar registros a la hoja
             for (int i = 0; i < viewModel.registros.size(); i++) {
                 Registro registro = viewModel.registros.get(i);
                 Row row = sheet.createRow(i + 1);
@@ -173,9 +184,9 @@ public class MainActivity extends AppCompatActivity {
                 row.createCell(3).setCellValue(registro.fecha);
                 row.createCell(4).setCellValue(registro.talla);
                 row.createCell(5).setCellValue(registro.sku);
+                row.createCell(6).setCellValue(registro.cantidad);
             }
 
-            // Guardar archivo
             String fecha = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
             String fileName = "Registros_" + fecha + ".xlsx";
             File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
@@ -187,14 +198,15 @@ public class MainActivity extends AppCompatActivity {
 
             Toast.makeText(this, "Datos exportados correctamente: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
 
-            // Limpiar registros
             viewModel.registros.clear();
             actualizarListaRegistros();
+            spinnerArea.setSelection(0); // Restablece el área seleccionada
 
         } catch (Exception e) {
             Toast.makeText(this, "Error al exportar los datos: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
+
 
     private void promptPasswordForDeletion(int position) {
         EditText passwordInput = new EditText(this);

@@ -1,14 +1,13 @@
 package com.example.seguimiento;
 
-import androidx.annotation.NonNull;
-
 public class Registro {
-    String nombre;
-    String area;
-    String codigo;
-    String fecha;
-    String talla;
-    String sku;
+    public String nombre;
+    public String area;
+    public String codigo;
+    public String fecha;
+    public String talla;
+    public String sku;
+    public int cantidad; // Nuevo campo
 
     public Registro(String nombre, String area, String codigo, String fecha, String talla, String sku) {
         this.nombre = nombre;
@@ -17,13 +16,11 @@ public class Registro {
         this.fecha = fecha;
         this.talla = talla;
         this.sku = sku;
+        this.cantidad = 1; // Inicializa en 1
     }
 
-    @NonNull
     @Override
     public String toString() {
-        return "Nombre: " + nombre + ", Área: " + area +
-                ", Código: " + codigo + ", Fecha: " + fecha +
-                ", Talla: " + talla + ", SKU: " + sku;
+        return nombre + " | " + area + " | " + codigo + " | " + fecha + " | Talla: " + talla + " | SKU: " + sku + " | Cantidad: " + cantidad;
     }
 }
