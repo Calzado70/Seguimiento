@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Seguimientos</string>
+    <string name="Añadir_Lectura">Añadir Lectura</string>
+    <string name="Exportar_a_Excel">Exportar a Excel</string>
+    <string name="Introduce_el_código">Introduce el código</string>
+    <string name="Código_de_Barras">Código de Barras:</string>
+    <string name="Area">Area:</string>
+    <string name="Pareja">Pareja:</string>
+    <string name="conteo">Conteo</string>
+    <string name="Nomb">Nombre:</string>
+    <string name="Nombre">Ingrese Su Nombre:</string>
+    <string name="eliminar_producto">Eliminar Producto</string>
+    <!-- Otras definiciones existentes -->
+
+    <string-array name="area_options">
+        <item>Troquelado</item>
+        <item>Guarnecida Interna</item>
+        <item>Cortes Guarnecidos</item>
+        <item>Preparada 2</item>
+        <item>Inyección</item>
+        <item>Vulcanizada</item>
+        <item>Cementada</item>
+        <item>Terminada</item>
+    </string-array>
+
+</resources>

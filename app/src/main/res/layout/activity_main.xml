@@ -1,0 +1,90 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/fondo"
+    android:padding="16dp">
+
+    <!-- Spinner para "Area" -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Area"
+        android:textColor="@color/white"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp" />
+
+    <Spinner
+        android:id="@+id/spinner_area"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:background="@drawable/bordes"
+        android:textColor="@color/black" />
+
+    <!-- Campo para el nombre.-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Nomb"
+        android:textColor="@color/white"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Código de barras -->
+    <EditText
+        android:id="@+id/cantidad_manual"
+        android:layout_width="match_parent"
+        android:layout_height="39dp"
+        android:background="@drawable/bordes"
+        android:hint="@string/Nombre"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Código_de_Barras"
+        android:textColor="@color/white"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/edittext_codigo"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/bordes"
+        android:hint="@string/Introduce_el_código"
+        android:textColor="@color/black" />
+
+    <!-- Botones -->
+    <Button
+        android:id="@+id/button_add"
+        android:layout_width="match_parent"
+        android:background="@drawable/botones"
+        android:layout_height="wrap_content"
+        android:text="@string/Añadir_Lectura"
+        android:textColor="@color/white"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/button_exportar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/botones"
+        android:textColor="@color/white"
+        android:text="@string/Exportar_a_Excel"
+        android:layout_marginTop="8dp" />
+
+    <!-- Lista para mostrar los datos -->
+    <ListView
+        android:id="@+id/listview_registros"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:layout_margin="5dp"
+        android:background="@drawable/botones"
+        android:divider="@android:color/background_dark"
+        android:dividerHeight="1dp"
+        android:textColor="@color/white" />
+
+</LinearLayout>
