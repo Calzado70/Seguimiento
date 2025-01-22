@@ -115,8 +115,8 @@ public class MainActivity extends AppCompatActivity {
         }
         if (nombre.isEmpty()) {
             nombre = nombreActual;
-        } else if (codigo.length() < 13) {
-            Toast.makeText(this, "El código debe tener al menos 13 dígitos.", Toast.LENGTH_SHORT).show();
+        } else if (codigo.length() < 10) {
+            Toast.makeText(this, "El código debe tener al menos 10 dígitos.", Toast.LENGTH_SHORT).show();
             return;
         }
 
