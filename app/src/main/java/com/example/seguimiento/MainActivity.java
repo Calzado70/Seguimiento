@@ -95,12 +95,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
     private void configurarSpinnerArea() {
         // Opciones para el Spinner del área
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.area_options, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerArea.setAdapter(adapter);
     }
+
 
     private void procesarLectura() {
         String codigo = codigoEditText.getText().toString().trim();
@@ -130,18 +132,17 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
         }
-
         if (!codigoExistente) {
             viewModel.registros.add(new Registro(nombre, area, codigo, fecha, talla, sku));
         }
-
         nombreActual = nombre;
-
         actualizarListaRegistros();
         codigoEditText.setText("");
         nombreEditText.setText(nombreActual);
         Toast.makeText(this, "Lectura procesada.", Toast.LENGTH_SHORT).show();
     }
+
+
     private void actualizarListaRegistros() {
         registrosAdapter.clear();
         for (Registro registro : viewModel.registros) {
@@ -150,18 +151,19 @@ public class MainActivity extends AppCompatActivity {
         registrosAdapter.notifyDataSetChanged();
     }
 
+
     private void eliminarRegistro(int position) {
         viewModel.registros.remove(position);
         actualizarListaRegistros();
         Toast.makeText(this, "Registro eliminado.", Toast.LENGTH_SHORT).show();
     }
 
+
     private void exportToExcel() {
         if (viewModel.registros.isEmpty()) {
             Toast.makeText(this, "No hay registros para exportar.", Toast.LENGTH_SHORT).show();
             return;
         }
-
         try {
             XSSFWorkbook workbook = new XSSFWorkbook();
             Sheet sheet = workbook.createSheet("Registros");
@@ -201,7 +203,6 @@ public class MainActivity extends AppCompatActivity {
             viewModel.registros.clear();
             actualizarListaRegistros();
             spinnerArea.setSelection(0); // Restablece el área seleccionada
-
         } catch (Exception e) {
             Toast.makeText(this, "Error al exportar los datos: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
