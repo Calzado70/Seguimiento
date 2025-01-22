@@ -164,10 +164,20 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "No hay registros para exportar.", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        String nombre = nombreEditText.getText().toString().trim();
+        String area = spinnerArea.getSelectedItem().toString();
+
+        if (nombre.isEmpty() || area.isEmpty()) {
+            Toast.makeText(this, "Por favor, asegúrate de ingresar un nombre y seleccionar un área.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         try {
             XSSFWorkbook workbook = new XSSFWorkbook();
             Sheet sheet = workbook.createSheet("Registros");
 
+            // Crear la fila de encabezados
             Row headerRow = sheet.createRow(0);
             headerRow.createCell(0).setCellValue("Nombre");
             headerRow.createCell(1).setCellValue("Área");
@@ -177,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
             headerRow.createCell(5).setCellValue("SKU");
             headerRow.createCell(6).setCellValue("Cantidad");
 
+            // Crear filas para los registros
             for (int i = 0; i < viewModel.registros.size(); i++) {
                 Registro registro = viewModel.registros.get(i);
                 Row row = sheet.createRow(i + 1);
@@ -189,10 +200,13 @@ public class MainActivity extends AppCompatActivity {
                 row.createCell(6).setCellValue(registro.cantidad);
             }
 
+            // Generar el nombre del archivo con el nombre y el área
             String fecha = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-            String fileName = "Registros_" + fecha + ".xlsx";
+            String fileName = nombre + "_" + area + "_" + fecha + ".xlsx";
             File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
             File file = new File(downloadsDir, fileName);
+
+            // Escribir el archivo
             FileOutputStream fileOut = new FileOutputStream(file);
             workbook.write(fileOut);
             fileOut.close();
@@ -200,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
 
             Toast.makeText(this, "Datos exportados correctamente: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
 
+            // Limpiar los registros y actualizar la interfaz
             viewModel.registros.clear();
             actualizarListaRegistros();
             spinnerArea.setSelection(0); // Restablece el área seleccionada
