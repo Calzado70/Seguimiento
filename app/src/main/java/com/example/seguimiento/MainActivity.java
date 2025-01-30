@@ -113,11 +113,17 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Por favor complete todos los campos.", Toast.LENGTH_SHORT).show();
             return;
         }
+
+
+        if (codigo.length() < 10) {
+            Toast.makeText(this, "El código debe tener al menos 10 dígitos.", Toast.LENGTH_SHORT).show();
+            codigoEditText.setText("");
+            return;
+        }
+
+
         if (nombre.isEmpty()) {
             nombre = nombreActual;
-        } else if (codigo.length() < 10) {
-            Toast.makeText(this, "El código debe tener al menos 10 dígitos.", Toast.LENGTH_SHORT).show();
-            return;
         }
 
         String fecha = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
