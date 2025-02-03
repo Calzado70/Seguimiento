@@ -13,10 +13,8 @@
     <!-- Otras definiciones existentes -->
 
     <string-array name="area_options">
-        <item>Troquelado</item>
-        <item>Guarnecida Interna</item>
-        <item>Cortes Guarnecidos</item>
-        <item>Preparada 2</item>
+        <item>Corte</item>
+        <item>Montaje</item>
         <item>Inyección</item>
         <item>Vulcanizada</item>
         <item>Cementada</item>

@@ -27,19 +27,15 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Variables de la interfaz
     private Spinner spinnerArea;
     private EditText nombreEditText, codigoEditText;
 
-    // Adaptador para la lista de registros
     private ArrayAdapter<String> registrosAdapter;
 
     private String nombreActual = "";
 
-    // Contraseña para eliminar
     private static final String PASSWORD = "Admon123";
 
-    // ViewModel para mantener los datos
     private MainViewModel viewModel;
 
     @Override
@@ -47,10 +43,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Inicializar el ViewModel
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-        // Inicializar los elementos de la interfaz
         spinnerArea = findViewById(R.id.spinner_area);
         nombreEditText = findViewById(R.id.cantidad_manual);
         codigoEditText = findViewById(R.id.edittext_codigo);
@@ -58,14 +52,11 @@ public class MainActivity extends AppCompatActivity {
         Button addButton = findViewById(R.id.button_add);
         Button exportButton = findViewById(R.id.button_exportar);
 
-        // Configurar las opciones del Spinner para el área
         configurarSpinnerArea();
 
-        // Configurar el adaptador para la lista de registros
         registrosAdapter = new ArrayAdapter<>(this, R.layout.list_item_layout, new ArrayList<>());
         registrosListView.setAdapter(registrosAdapter);
 
-        // Cargar registros desde el ViewModel
         actualizarListaRegistros();
 
         // Listener para procesar lecturas automáticas con la pistola lectora
@@ -103,6 +94,41 @@ public class MainActivity extends AppCompatActivity {
         spinnerArea.setAdapter(adapter);
     }
 
+    private String filtrarCodigoPorArea(String codigo, String area) {
+        String letrasArea = "";
+        switch (area) {
+            case "Corte":
+                letrasArea = "C";
+                break;
+            case "Montaje":
+                letrasArea = "M";
+                break;
+            case "Inyección":
+                letrasArea = "I";
+                break;
+            case "Cementada":
+                letrasArea = "E";
+                break;
+            case "Vulcanizada":
+                letrasArea = "V";
+                break;
+            case "Terminada":
+                letrasArea = "T";
+                break;
+            default:
+                return codigo;
+        }
+
+        // Eliminar las letras que no corresponden al área
+        StringBuilder codigoFiltrado = new StringBuilder();
+        for (char c : codigo.toCharArray()) {
+            if (letrasArea.indexOf(c) != -1 || !"CMIEVT".contains(String.valueOf(c))) {
+                codigoFiltrado.append(c);
+            }
+        }
+
+        return codigoFiltrado.toString();
+    }
 
     private void procesarLectura() {
         String codigo = codigoEditText.getText().toString().trim();
@@ -126,20 +152,25 @@ public class MainActivity extends AppCompatActivity {
             nombre = nombreActual;
         }
 
+        String codigoFiltrado = filtrarCodigoPorArea(codigo, area);
+
         String fecha = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
         String talla = codigo.length() >= 2 ? codigo.substring(codigo.length() - 2) : "N/A";
-        String sku = codigo.substring(0, 3);
+
+        // Mostrar el código filtrado en un Toast (o hacer lo que necesites con él)
+        Toast.makeText(this, "Código filtrado: " + codigoFiltrado, Toast.LENGTH_SHORT).show();
 
         boolean codigoExistente = false;
         for (Registro registro : viewModel.registros) {
-            if (registro.codigo.equals(codigo)) {
+            if (registro.sku.equals(codigoFiltrado)) {
                 registro.cantidad++;
                 codigoExistente = true;
                 break;
             }
         }
         if (!codigoExistente) {
-            viewModel.registros.add(new Registro(nombre, area, codigo, fecha, talla, sku));
+            Registro nuevoRegistro = new Registro(nombre, area, codigoFiltrado, fecha, talla);
+            viewModel.registros.add(nuevoRegistro);
         }
         nombreActual = nombre;
         actualizarListaRegistros();
@@ -187,11 +218,10 @@ public class MainActivity extends AppCompatActivity {
             Row headerRow = sheet.createRow(0);
             headerRow.createCell(0).setCellValue("Nombre");
             headerRow.createCell(1).setCellValue("Área");
-            headerRow.createCell(2).setCellValue("Código");
+            headerRow.createCell(2).setCellValue("SKU");
             headerRow.createCell(3).setCellValue("Fecha");
             headerRow.createCell(4).setCellValue("Talla");
-            headerRow.createCell(5).setCellValue("SKU");
-            headerRow.createCell(6).setCellValue("Cantidad");
+            headerRow.createCell(5).setCellValue("Cantidad");
 
             // Crear filas para los registros
             for (int i = 0; i < viewModel.registros.size(); i++) {
@@ -199,11 +229,10 @@ public class MainActivity extends AppCompatActivity {
                 Row row = sheet.createRow(i + 1);
                 row.createCell(0).setCellValue(registro.nombre);
                 row.createCell(1).setCellValue(registro.area);
-                row.createCell(2).setCellValue(registro.codigo);
+                row.createCell(2).setCellValue(registro.sku);
                 row.createCell(3).setCellValue(registro.fecha);
                 row.createCell(4).setCellValue(registro.talla);
-                row.createCell(5).setCellValue(registro.sku);
-                row.createCell(6).setCellValue(registro.cantidad);
+                row.createCell(5).setCellValue(registro.cantidad);
             }
 
             // Generar el nombre del archivo con el nombre y el área
